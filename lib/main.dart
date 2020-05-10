@@ -1,9 +1,8 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/widgets.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,21 +11,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      home: MyHomePage(title: 'Blockchain App',),
       title: 'Blockchain App',
       theme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: Colors.black26,
-        accentColor: Colors.black12,
+        primaryColor: Colors.black,
+        accentColor: Colors.black,
         buttonTheme: ButtonThemeData(
             buttonColor: Colors.black,
             shape: StadiumBorder(),
             textTheme: ButtonTextTheme.accent),
-        appBarTheme: AppBarTheme(color: Colors.black45),
-        primaryTextTheme: TextTheme(
+        appBarTheme: AppBarTheme(color: Colors.black,
+        textTheme: TextTheme(
             title: TextStyle(color: Colors.white, fontSize: 26),
-            headline: TextStyle(color: Colors.white, fontSize: 40))),
-      home: MyHomePage(title: 'Blackchain App'),
-    );
+            headline: TextStyle(color: Colors.white, fontSize: 40)))));
   }
 }
 
@@ -49,25 +47,42 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  _authorize(){
-    final checksum = '2e3d1a2d696a4ce5de7da89ba5755dc5df79f071daa3a9f4166569cecc3353c1';
-    var firstChunk = utf8.encode(Text(myController1.text).toString());
-    var secondChunk = utf8.encode(Text(myController2.text).toString());
-    var output = new AccumulatorSink<Digest>();
-    var input = sha256.startChunkedConversion(output);
-    input.add(firstChunk);
-    input.add(secondChunk); // call `add` for every chunk of input data
-    input.close();
-    var digest = output.events.single;
-  }
-  final myController1= TextEditingController();
-  final myController2= TextEditingController();
+  final myController1= TextEditingController(text: "admin");
+  final myController2= TextEditingController(text: "password");
+  hash(foo) => sha256.convert(utf8.encode(foo));
+  authorize(){
+    final checkuser = hash("admin");
+    final checkpass = hash("password");
+    var username = hash(myController1.text);
+    var password = hash(myController2.text);
+    if(checkuser == username && checkpass == password){
+      return SimpleDialog(
+        title: const Text('Select one.'),
+        children: <Widget>[
+          SimpleDialogOption(
+            onPressed: () { Navigator.pop(context); },
+            child: FloatingActionButton(
+              child: Icon(Icons.arrow_downward),
+            ),
+          ),
+          SimpleDialogOption(
+            onPressed: () { Navigator.pop(context); },
+            child: FloatingActionButton(
+              child: Icon(Icons.arrow_upward),),
+          ),
+    ]);
+    } else{
+      print('no');
+      print(hash("admin"));
+      print(hash(myController1.text));
+    }
+
   void dispose() {
     // Clean up the controller when the widget is disposed.
     myController1.dispose();
     myController2.dispose();
     super.dispose();
-  }
+  }}
 
   @override
   Widget build(BuildContext context) {
@@ -84,31 +99,42 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
+
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text('And who are you?', style: Theme.of(context).textTheme.title),
-            TextField(
-              controller: myController1,
-              obscureText: true,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Login'),),
-            TextField(
-              controller: myController2,
-              obscureText: true,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Password',),)
+            Padding(
+              padding: EdgeInsets.only(left: 50, right: 50, top: 20),
+              child:  TextFormField(
+                controller: myController1,
+                obscureText: false,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Login'),)
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 20, left: 50, right: 50),
+              child:  TextFormField(
+                controller: myController2,
+                obscureText: true,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Password',),)
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 10),
+              child:
+              FloatingActionButton(
+              onPressed: authorize,
+              tooltip: 'Authorize me!',
+              child: Icon(Icons.check_circle_outline, color: Colors.white,),
+            ),
+            )
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _authorize,
-        tooltip: 'Authorize me!',
-        child: Icon(Icons.check_circle_outline, color: Colors.white,),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
