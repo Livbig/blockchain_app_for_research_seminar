@@ -26,7 +26,7 @@ dependencies:
   convert: ^2.1.1
   qrcode: ^1.0.4
   pretty_qr_code: ^1.0.1
-  qrscan: ^0.2.17
+  #qrscan: ^0.2.17
   permission_handler: ^5.0.0
 dependency_overrides:
   crypto: 2.1.4

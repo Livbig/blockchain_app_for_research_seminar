@@ -4,9 +4,15 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:qr/qr.dart';
-import 'package:qrscan/qrscan.dart' as scanner;
+//import 'package:qrscan/qrscan.dart' as scanner;
+import 'package:bloackchainapp/transactions.dart';
 
 void main() => runApp(MyApp());
+
+
+hash(foo) => sha256.convert(utf8.encode(foo));
+
+//hash(foo) => sha256.convert(utf8.encode("${sha256.convert(utf8.encode(foo))}"));
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -44,41 +50,65 @@ class _MyHomePageState extends State<MyHomePage> {
   final myController3= TextEditingController();
   final myController4= TextEditingController();
 
-  hash(foo) => sha256.convert(utf8.encode(foo));
-  qrScan() async {
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    myController1.dispose();
+    myController2.dispose();
+    myController3.dispose();
+    myController4.dispose();
+    super.dispose();}
+
+  qrScan() async{
     print('ok');
-    String cameraScanResult = await scanner.scan();
-    this.myController3.text = cameraScanResult;
+//    String cameraScanResult = await scanner.scan();
+//    this.myController3.text = cameraScanResult;
     showDialog(context: context, builder: (BuildContext context) {
       return SimpleDialog(
-          title: Text(
-            'Confirm transaction.', style: TextStyle(color: Colors.white),),
+          title: Text('Confirm transaction.', style: TextStyle(color: Colors.white)),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20)),
           children: <Widget>[
-            TextFormField(
-              controller: myController3,
-              obscureText: false,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Address'),),
-            TextFormField(
-              controller: myController4,
-              obscureText: false,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Amount'),)
+            Padding(
+              padding: EdgeInsets.all(15),
+              child: TextFormField(
+                controller: myController3,
+                obscureText: false,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Address'),)
+            ),
+           Padding(
+             padding: EdgeInsets.all(15),
+             child: TextFormField(
+               controller: myController4,
+               obscureText: false,
+               decoration: InputDecoration(
+                   border: OutlineInputBorder(),
+                   labelText: 'Amount'),)
+           ),
+            Padding(
+              padding: EdgeInsets.only(top: 15),
+              child: FloatingActionButton(
+                onPressed: addTransaction(myController1.text, myController3.text, myController4.text),
+                tooltip: 'Authorize!',
+                child: Icon(Icons.check_circle_outline, color: Colors.white,),
+              ),
+            )
           ]
       );
     },
     );
     }
+
+
   authorize(){
     final checkuser = hash("admin");
     final checkpass = hash("password");
     var username = hash(myController1.text);
     var password = hash(myController2.text);
     if(checkuser == username && checkpass == password){choice();}}
+
+
   qrGen(){
     showDialog(context: context, builder: (BuildContext context){
       return SimpleDialog(
@@ -100,6 +130,8 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     });
   }
+
+
   choice(){
     showDialog(context: context, builder: (BuildContext context){
       return SimpleDialog(
@@ -121,13 +153,6 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
     );
-  }
-
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    myController1.dispose();
-    myController2.dispose();
-    super.dispose();
   }
 
   @override
