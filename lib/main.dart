@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
-import 'package:qrcode/qrcode.dart';
 import 'package:qr/qr.dart';
+import 'package:qrscan/qrscan.dart' as scanner;
 
 void main() => runApp(MyApp());
 
@@ -41,8 +41,38 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final myController1= TextEditingController(text: "admin");
   final myController2= TextEditingController(text: "password");
+  final myController3= TextEditingController();
+  final myController4= TextEditingController();
+
   hash(foo) => sha256.convert(utf8.encode(foo));
-  
+  qrScan() async {
+    print('ok');
+    String cameraScanResult = await scanner.scan();
+    this.myController3.text = cameraScanResult;
+    showDialog(context: context, builder: (BuildContext context) {
+      return SimpleDialog(
+          title: Text(
+            'Confirm transaction.', style: TextStyle(color: Colors.white),),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20)),
+          children: <Widget>[
+            TextFormField(
+              controller: myController3,
+              obscureText: false,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Address'),),
+            TextFormField(
+              controller: myController4,
+              obscureText: false,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Amount'),)
+          ]
+      );
+    },
+    );
+    }
   authorize(){
     final checkuser = hash("admin");
     final checkpass = hash("password");
@@ -50,7 +80,6 @@ class _MyHomePageState extends State<MyHomePage> {
     var password = hash(myController2.text);
     if(checkuser == username && checkpass == password){choice();}}
   qrGen(){
-    print('yes');
     showDialog(context: context, builder: (BuildContext context){
       return SimpleDialog(
         title: Text('Your QR code.', style: TextStyle(color: Colors.black),),
@@ -81,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {},
               child: FloatingActionButton.extended(
                   label: Text("Give"),
-                  icon: Icon(Icons.arrow_upward), onPressed: () {},),
+                  icon: Icon(Icons.arrow_upward), onPressed: () {qrScan();},),
             ),
             SimpleDialogOption(
               onPressed: () {},
