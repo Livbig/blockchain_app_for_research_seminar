@@ -6,6 +6,7 @@ import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:qr/qr.dart';
 //import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:bloackchainapp/transactions.dart';
+import 'package:bloackchainapp/users.dart';
 
 void main() => runApp(MyApp());
 
@@ -47,8 +48,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final myController1= TextEditingController(text: "admin");
   final myController2= TextEditingController(text: "password");
-  final myController3= TextEditingController();
-  final myController4= TextEditingController();
+  final myController3= TextEditingController(text: 'user');
+  final myController4= TextEditingController(text: '0');
 
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -81,6 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
              padding: EdgeInsets.all(15),
              child: TextFormField(
                controller: myController4,
+               keyboardType: TextInputType.number,
                obscureText: false,
                decoration: InputDecoration(
                    border: OutlineInputBorder(),
@@ -102,11 +104,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
   authorize(){
-    final checkuser = hash("admin");
-    final checkpass = hash("password");
-    var username = hash(myController1.text);
-    var password = hash(myController2.text);
-    if(checkuser == username && checkpass == password){choice();}}
+    var username = myController1.text;
+    var password = hash(myController2.text).toString();
+    if(users.containsKey(username) && password == users[username][0]){choice();}}
 
 
   qrGen(){
