@@ -46,23 +46,53 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  final myController1= TextEditingController(text: "admin");
-  final myController2= TextEditingController(text: "password");
-  final myController3= TextEditingController(text: 'user');
-  final myController4= TextEditingController(text: '0');
+  final ctrlrLogin= TextEditingController(text: "admin");
+  final ctrlrPsswd= TextEditingController(text: "password");
+  final ctrlrAddrss= TextEditingController(text: 'user');
+  final ctrlrAmount= TextEditingController(text: '0');
 
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    myController1.dispose();
-    myController2.dispose();
-    myController3.dispose();
-    myController4.dispose();
-    super.dispose();}
+    ctrlrLogin.dispose();
+    ctrlrPsswd.dispose();
+    ctrlrAddrss.dispose();
+    ctrlrAmount.dispose();
+    super.dispose();
+  }
+
+  authorize(){
+    var username = ctrlrLogin.text;
+    var password = hash(ctrlrPsswd.text).toString();
+    if(users.containsKey(username) && password == users[username][0]){choice();}
+  }
+
+  choice(){
+    showDialog(context: context, builder: (BuildContext context){
+      return SimpleDialog(
+          title: const Text('Select one.'),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          children: <Widget>[
+            SimpleDialogOption(
+              onPressed: () {},
+              child: FloatingActionButton.extended(
+                label: Text("Give"),
+                icon: Icon(Icons.arrow_upward), onPressed: () {qrScan();},),
+            ),
+            SimpleDialogOption(
+              onPressed: () {},
+              child: FloatingActionButton.extended(
+                label: Text("Get"),
+                icon: Icon(Icons.arrow_downward), onPressed: () {qrGen();},),
+            ),]
+      );
+    }
+    );
+  }
 
   qrScan() async{
     print('ok');
 //    String cameraScanResult = await scanner.scan();
-//    this.myController3.text = cameraScanResult;
+//    this.ctrlrAddrss.text = cameraScanResult;
     showDialog(context: context, builder: (BuildContext context) {
       return SimpleDialog(
           title: Text('Confirm transaction.', style: TextStyle(color: Colors.white)),
@@ -72,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Padding(
               padding: EdgeInsets.all(15),
               child: TextFormField(
-                controller: myController3,
+                controller: ctrlrAddrss,
                 obscureText: false,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -81,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
            Padding(
              padding: EdgeInsets.all(15),
              child: TextFormField(
-               controller: myController4,
+               controller: ctrlrAmount,
                keyboardType: TextInputType.number,
                obscureText: false,
                decoration: InputDecoration(
@@ -91,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Padding(
               padding: EdgeInsets.only(top: 15),
               child: FloatingActionButton(
-                onPressed: addTransaction(myController1.text, myController3.text, myController4.text),
+                onPressed: addTransaction(ctrlrLogin.text, ctrlrAddrss.text, ctrlrAmount.text),
                 tooltip: 'Authorize!',
                 child: Icon(Icons.check_circle_outline, color: Colors.white,),
               ),
@@ -101,13 +131,6 @@ class _MyHomePageState extends State<MyHomePage> {
     },
     );
     }
-
-
-  authorize(){
-    var username = myController1.text;
-    var password = hash(myController2.text).toString();
-    if(users.containsKey(username) && password == users[username][0]){choice();}}
-
 
   qrGen(){
     showDialog(context: context, builder: (BuildContext context){
@@ -131,30 +154,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-
-  choice(){
-    showDialog(context: context, builder: (BuildContext context){
-      return SimpleDialog(
-          title: const Text('Select one.'),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          children: <Widget>[
-            SimpleDialogOption(
-              onPressed: () {},
-              child: FloatingActionButton.extended(
-                  label: Text("Give"),
-                  icon: Icon(Icons.arrow_upward), onPressed: () {qrScan();},),
-            ),
-            SimpleDialogOption(
-              onPressed: () {},
-              child: FloatingActionButton.extended(
-                  label: Text("Get"),
-                  icon: Icon(Icons.arrow_downward), onPressed: () {qrGen();},),
-            ),]
-      );
-    }
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -169,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Padding(
               padding: EdgeInsets.only(left: 50, right: 50, top: 20),
               child:  TextFormField(
-                controller: myController1,
+                controller: ctrlrLogin,
                 obscureText: false,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -178,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Padding(
               padding: EdgeInsets.only(top: 20, left: 50, right: 50),
               child:  TextFormField(
-                controller: myController2,
+                controller: ctrlrPsswd,
                 obscureText: true,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
